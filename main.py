@@ -77,6 +77,7 @@ class Application(Tk):
             frame.city_label.config(text=self.ward) # 区のラベルを更新
 
         elif page_name == "Gomi_type_search" and self.index:
+            # タイトルに表示するための詳細設定
             frame.index.config(text=self.index) # インデックスラベルを更新
         frame.tkraise() # フレームを前面に表示
 
@@ -108,7 +109,7 @@ class LogoScreen(Frame):
             self.after(1000, lambda: controller.show_frame("SelectAreaScreen")) # 1秒後に地域選択画面を表示
 
 
-# 位置選択画面を表示
+# 地域選択画面を表示
 class SelectAreaScreen(Frame):
     def __init__(self,parent,controller):
         super().__init__(parent)
@@ -180,13 +181,13 @@ class SelectArea_by_postcode(Frame):
         self.controller.show_frame("SelectAreaScreen")  # エリア選択画面を表示
 
 
-    # 郵便番号から区号を取得する
+    # 郵便番号から区の情報を取得する
     def get_ku_part(self, postcode, df_postcode):
 
         # 対象郵便番号をフィルタリング
         filtered_df = df_postcode[df_postcode['post_code'] == int(postcode)]
         
-        # 地区と部品データを表示
+        # 存在する場合
         if not filtered_df.empty:
             # 表示する住所を取得
             address = filtered_df.iloc[0]['kanji_district'] + filtered_df.iloc[0]['kanji_chome']
@@ -194,10 +195,10 @@ class SelectArea_by_postcode(Frame):
             self.controller.ward = address # コントローラーのwardを更新
             self.after(1000,lambda : self.controller.show_frame("MenuScreen")) # 1秒後にメニュー画面を表示
                 
-            # 区号を取得
+            # 区の情報を取得
             ku_part = filtered_df.iloc[0]['kanji_district'] + str(int(filtered_df.iloc[0]['part']))
 
-            # 区号をファイルに書き込む
+            # 区の情報をファイルに書き込む
             with open('saved_address/ku_part.txt','w') as f:
                 f.write(f'{ku_part}\n{address}\n') # 区号と住所を保存
             self.controller.ku_part = ku_part  # コントローラーのku_partを更新
@@ -205,7 +206,7 @@ class SelectArea_by_postcode(Frame):
             self.address.config(text='無効な郵便番号')
 
 
-# 地域を選択する画面
+# 地域によるエリア選択画面を表示
 class SelectArea_by_area(Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
